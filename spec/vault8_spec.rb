@@ -41,8 +41,8 @@ describe Vault8 do
     let(:public_key) { 'public' }
     let(:private_key) { 'private' }
     let(:path) { '/image_uid/grayscale/name.jpeg' }
-    let(:current_time) { Time.new(2027, 1, 14, 21, 33, 12).to_i }
-    let(:until_time) { Time.new(2027, 1, 14, 22, 33, 12).to_i }
+    let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
+    let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
     context 'with all args' do
       subject {vault8.encode_token({p: public_key, s: private_key, path: path, current_time: current_time, until_time: until_time  })}
       it { is_expected.to eq '13c2408f42fe46a64e682a7b3960d432add980f770e7da89f22808ce7295e296'}
