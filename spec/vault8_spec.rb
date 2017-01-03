@@ -41,7 +41,7 @@ describe Vault8 do
     let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
     let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
     subject {vault8.upload_url({path: path, current_time: current_time, until_time: until_time})}
-    it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b46cdd6f109a8ea869cbef0e42ab833367e107ad825db4039b64263f26036b2d&time=1799955192&until=1799958792'}
+    it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b92268754db8d4b962f83bb31b22e2a435ca1e94&time=1799955192&until=1799958792'}
   end
 
   describe 'generate_url_for' do
@@ -50,13 +50,13 @@ describe Vault8 do
       let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
       let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
       subject {vault8.generate_url_for({path: path, current_time: current_time, until_time: until_time})}
-      it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b46cdd6f109a8ea869cbef0e42ab833367e107ad825db4039b64263f26036b2d&time=1799955192&until=1799958792'}
+      it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b92268754db8d4b962f83bb31b22e2a435ca1e94&time=1799955192&until=1799958792'}
     end
 
     context 'for image getting' do
       let(:path) { '/afnanfl12331/image.jpg' }
       subject {vault8.generate_url_for({path: path})}
-      it { is_expected.to eq 'http://lvh.me:3000/afnanfl12331/image.jpg?p=public&s=5edc627565adb2a77ce59a91fb7a8e04b45b46d33b272ccb84e5168c61d77593'}
+      it { is_expected.to eq 'http://lvh.me:3000/afnanfl12331/image.jpg?p=public&s=8f6dc24cb5d5125be035a9276e49887b32f72955'}
     end
   end
 
@@ -68,17 +68,17 @@ describe Vault8 do
     let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
     context 'with all args' do
       subject {vault8.encode_token({path: path, current_time: current_time, until_time: until_time  })}
-      it { is_expected.to eq '13c2408f42fe46a64e682a7b3960d432add980f770e7da89f22808ce7295e296'}
+      it { is_expected.to eq 'cadcb87ef4d88708f5de366b010b58d5b01574ad'}
     end
 
     context 'without until' do
       subject {vault8.encode_token({path: path, current_time: current_time})}
-      it { is_expected.to eq '5be30e8674e936e830e4bb70b1dc09c94abcdaa8a679745a414dc3672cdcd448'}
+      it { is_expected.to eq '36dbd3b870e661fd72e0e18e612e6eb4b51efae2'}
     end
 
     context 'without current_time' do
       subject {vault8.encode_token({path: path, until_time: until_time})}
-      it { is_expected.to eq '950c5224b94b10d0ab45c51d38365b678b98b2a1fea7baf6c602806d0f40e61a'}
+      it { is_expected.to eq 'ce72e88293f35d2f4b3ec7b5c357e59d8db8f173'}
     end
   end
 
@@ -89,17 +89,17 @@ describe Vault8 do
 
     context 'without filters' do
       let(:filters) { [] }
-      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/john.jpg?p=public&s=6b9164c8e72d0a684218b9e6be22b33f4cdd70c610db9abe9243a67a790165ed'}
+      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/john.jpg?p=public&s=417c9b2153d8573ae4562b5ccf164fd970c96e7a'}
     end
 
     context 'with grayscale filter' do
       let(:filters) { [{'grayscale' => ''}] }
-      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/grayscale/john.jpg?p=public&s=47a02cbd50e744972f42206f0724a1670ba3d4ecdb60f14f68d7be40910c58d3'}
+      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/grayscale/john.jpg?p=public&s=05b08a049fb616671d318ef576950e9b0a22bfc3'}
     end
 
     context 'with grayscale filter and blur' do
       let(:filters) { [{'grayscale' => ''}, {'blur' => '1'}] }
-      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/grayscale,blur-1/john.jpg?p=public&s=85537e23b88ca30c4eb62e785b5124126a38f44c1cfebdae4adb757ae55e5f60'}
+      it {is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/grayscale,blur-1/john.jpg?p=public&s=06f0d1d48e3e3204044d96aca37fbd3991941224'}
     end
   end
 

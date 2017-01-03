@@ -23,7 +23,7 @@ class Vault8
   end
 
   def encode_token(path:, current_time: nil, until_time: nil)
-    Digest::SHA256.hexdigest([public_key, secret_key, path, current_time, until_time].compact.join('|')).reverse
+    Digest::SHA1.hexdigest([public_key, secret_key, path, current_time, until_time].compact.join('|')).reverse
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
