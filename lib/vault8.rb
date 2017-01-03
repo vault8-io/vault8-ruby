@@ -39,8 +39,6 @@ class Vault8
     end.join(',')
   end
 
-  private
-
   def generate_url_for(path:, current_time: nil, until_time: nil)
     uri = URI.join(service_url, path)
     uri.query = { p: public_key,

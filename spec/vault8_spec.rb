@@ -44,6 +44,22 @@ describe Vault8 do
     it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b46cdd6f109a8ea869cbef0e42ab833367e107ad825db4039b64263f26036b2d&time=1799955192&until=1799958792'}
   end
 
+  describe 'generate_url_for' do
+    context 'for image uploading' do
+      let(:path) { '/upload' }
+      let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
+      let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
+      subject {vault8.generate_url_for({path: path, current_time: current_time, until_time: until_time})}
+      it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b46cdd6f109a8ea869cbef0e42ab833367e107ad825db4039b64263f26036b2d&time=1799955192&until=1799958792'}
+    end
+
+    context 'for image getting' do
+      let(:path) { '/afnanfl12331/image.jpg' }
+      subject {vault8.generate_url_for({path: path})}
+      it { is_expected.to eq 'http://lvh.me:3000/afnanfl12331/image.jpg?p=public&s=5edc627565adb2a77ce59a91fb7a8e04b45b46d33b272ccb84e5168c61d77593'}
+    end
+  end
+
   describe 'encode_token' do
     let(:public_key) { 'public' }
     let(:private_key) { 'private' }
