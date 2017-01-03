@@ -34,7 +34,7 @@ class Vault8
     return nil if filters.empty?
     filters.flat_map do |filter|
       filter.map do |k, v|
-        [k, (v.nil? || v.empty?) ? nil : v].compact.join('-')
+        [k, v.to_s.empty? ? nil : v].compact.join('-')
       end
     end.join(',')
   end
