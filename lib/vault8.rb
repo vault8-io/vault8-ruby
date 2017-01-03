@@ -2,6 +2,8 @@ require "vault8/version"
 require 'uri'
 
 class Vault8
+  attr_reader :public_key, :secret_key, :service_url
+
   def self.create!(public_key: , secret_key: , service_url:)
     self.new(public_key, secret_key, service_url)
   end
@@ -12,12 +14,16 @@ class Vault8
     @service_url = service_url
   end
 
-  def image_url(uid, filters=[], image_name='name.jpg')
-    URI.join(@service_url, image_path(uid, filters, image_name)).to_s
+  def image_url(uid:, filters: [], image_name: 'image.jpg')
+    generate_url_for(path: image_path(uid, filters, image_name))
   end
 
-  def encode_token(p:, s:, path:, current_time: nil, until_time: nil)
-    Digest::SHA256.hexdigest([p, s, path, current_time, until_time].compact.join('|')).reverse
+  def upload_url(path:, current_time:, until_time:)
+    generate_url_for(path: path, current_time: current_time, until_time: until_time)
+  end
+
+  def encode_token(path:, current_time: nil, until_time: nil)
+    Digest::SHA256.hexdigest([public_key, secret_key, path, current_time, until_time].compact.join('|')).reverse
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
@@ -31,5 +37,17 @@ class Vault8
         [k, (v.nil? || v.empty?) ? nil : v].compact.join('-')
       end
     end.join(',')
+  end
+
+  private
+
+  def generate_url_for(path:, current_time: nil, until_time: nil)
+    uri = URI.join(service_url, path)
+    uri.query = { p: public_key,
+                  s: encode_token(path: path, current_time: current_time, until_time: until_time),
+                  time: current_time,
+                  until: until_time
+                }.reduce([]) {|acc, x| acc << "#{x.first}=#{x.last}" unless x.last.nil?; acc}.join('&')
+    uri.to_s
   end
 end
