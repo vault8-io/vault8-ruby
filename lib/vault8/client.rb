@@ -19,7 +19,9 @@ module Vault8
     def merged_filters(filters=[])
       return nil if filters.empty?
       filters.map do |filter|
-        [filter.keys.first, filter.values.first].join('-')
+        filter.map do |k, v|
+          [k, (v.nil? || v.empty?) ? nil : v].compact.join('-')
+        end.join(',')
       end.join(',')
     end
   end

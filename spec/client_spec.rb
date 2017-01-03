@@ -15,12 +15,12 @@ describe Vault8::Client do
 
     context 'with grayscale filter' do
       let(:filters) { [{'grayscale' => ''}] }
-      it {is_expected.to eq 'http://lvh.me:4000/731f70564f9145d79282f8267c4495ee/grayscale-/john.jpg'}
+      it {is_expected.to eq 'http://lvh.me:4000/731f70564f9145d79282f8267c4495ee/grayscale/john.jpg'}
     end
 
     context 'with grayscale filter and blur' do
       let(:filters) { [{'grayscale' => ''}, {'blur' => '1'}] }
-      it {is_expected.to eq 'http://lvh.me:4000/731f70564f9145d79282f8267c4495ee/grayscale-,blur-1/john.jpg'}
+      it {is_expected.to eq 'http://lvh.me:4000/731f70564f9145d79282f8267c4495ee/grayscale,blur-1/john.jpg'}
     end
   end
 
@@ -36,12 +36,12 @@ describe Vault8::Client do
 
     context 'with grayscale filter' do
       let(:filters) { [{'grayscale' => ''}] }
-      it {is_expected.to eq '731f70564f9145d79282f8267c4495ee/grayscale-/john.jpg'}
+      it {is_expected.to eq '731f70564f9145d79282f8267c4495ee/grayscale/john.jpg'}
     end
 
     context 'with grayscale filter and blur' do
       let(:filters) { [{'grayscale' => ''}, {'blur' => '1'}] }
-      it {is_expected.to eq '731f70564f9145d79282f8267c4495ee/grayscale-,blur-1/john.jpg'}
+      it {is_expected.to eq '731f70564f9145d79282f8267c4495ee/grayscale,blur-1/john.jpg'}
     end
   end
 
@@ -60,12 +60,12 @@ describe Vault8::Client do
 
     context 'grayscale' do
       let(:filters) { [{'grayscale' => ''}] }
-      it {is_expected.to eq 'grayscale-'}
+      it {is_expected.to eq 'grayscale'}
     end
 
     context 'grayscale with nil' do
       let(:filters) { [{'grayscale' => nil}] }
-      it {is_expected.to eq 'grayscale-'}
+      it {is_expected.to eq 'grayscale'}
     end
 
     context 'watermark' do
@@ -75,7 +75,7 @@ describe Vault8::Client do
 
     context 'grayscale and watermark' do
       let(:filters) { [{'grayscale' => ''}, {'watermark' => ['logo20','center','l']}] }
-      it {is_expected.to eq 'grayscale-,watermark-logo20-center-l'}
+      it {is_expected.to eq 'grayscale,watermark-logo20-center-l'}
     end
 
     context 'resize_fill and watermark' do
@@ -85,12 +85,22 @@ describe Vault8::Client do
 
     context 'resize_fill and grayscale' do
       let(:filters) { [{'resize_fill' => [150, 140]}, {'grayscale' => ''}] }
-      it {is_expected.to eq 'resize_fill-150-140,grayscale-'}
+      it {is_expected.to eq 'resize_fill-150-140,grayscale'}
     end
 
     context 'resize_fill and grayscale and watermark' do
       let(:filters) { [{'resize_fill' => [150, 140]}, {'grayscale' => ''}, {'watermark' => ['logo20','center','l']}] }
-      it {is_expected.to eq 'resize_fill-150-140,grayscale-,watermark-logo20-center-l'}
+      it {is_expected.to eq 'resize_fill-150-140,grayscale,watermark-logo20-center-l'}
+    end
+
+    context 'filters without order' do
+      let(:filters) { [{'resize_fill' => [150, 140], 'grayscale' => '', 'watermark' => ['logo20','center','l']}] }
+      it {is_expected.to eq 'resize_fill-150-140,grayscale,watermark-logo20-center-l'}
+    end
+
+    context 'some filters with and some without order' do
+      let(:filters) { [{'resize_fill' => [150, 140], 'watermark' => ['logo20','center','l']}, {'grayscale' => ''}] }
+      it {is_expected.to eq 'resize_fill-150-140,watermark-logo20-center-l,grayscale'}
     end
 
   end
