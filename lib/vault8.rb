@@ -26,10 +26,10 @@ class Vault8
 
   def merged_filters(filters=[])
     return nil if filters.empty?
-    filters.map do |filter|
+    filters.flat_map do |filter|
       filter.map do |k, v|
         [k, (v.nil? || v.empty?) ? nil : v].compact.join('-')
-      end.join(',')
+      end
     end.join(',')
   end
 end
