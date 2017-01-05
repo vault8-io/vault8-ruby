@@ -18,7 +18,7 @@ class Vault8
     generate_url_for(path: image_path(uid, filters, image_name))
   end
 
-  def upload_url(path:, current_time:, until_time:)
+  def upload_url(path: '/upload', current_time:, until_time:)
     generate_url_for(path: path, current_time: current_time, until_time: until_time)
   end
 
@@ -27,7 +27,7 @@ class Vault8
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
-    [uid, merged_filters(filters), image_name].compact.join('/')
+    '/' + [uid, merged_filters(filters), image_name].compact.join('/')
   end
 
   def merged_filters(filters=[])
