@@ -14,8 +14,8 @@ class Vault8
     @service_url = service_url
   end
 
-  def image_url(uid:, filters: [], image_name: 'image.jpg')
-    generate_url_for(path: image_path(uid, filters, image_name))
+  def image_url(uid:, filters: [], image_name: 'image.jpg', current_time: Time.current.to_i, until_time: Time.current.to_i + 86400)
+    generate_url_for(path: image_path(uid, filters, image_name), current_time: current_time, until_time: until_time )
   end
 
   def upload_url(path: '/upload', current_time:, until_time:)
