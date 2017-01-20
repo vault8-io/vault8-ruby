@@ -92,8 +92,8 @@ describe Vault8 do
       subject { vault8.image_url(uid: uid, filters: filters, image_name: image_name, current_time: current_time, until_time: until_time)}
 
       context 'timestams is Time object' do
-        let(:current_time) { Time.new(2027, 1, 14, 21, 33, 12) }
-        let(:until_time) { Time.new(2027, 1, 14, 22, 33, 12) }
+        let(:current_time) { Time.new(2027, 1, 14, 21, 33, 12, "+02:00") }
+        let(:until_time) { Time.new(2027, 1, 14, 22, 33, 12, "+02:00") }
 
         it { is_expected.to eq 'http://lvh.me:3000/731f70564f9145d79282f8267c4495ee/john.jpg?p=public&s=3d87dbc06452c086ce554ccec3452af69748cd8f&time=1799955192&until=1799958792'}
       end
