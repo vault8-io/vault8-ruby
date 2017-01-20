@@ -14,11 +14,13 @@ class Vault8
     @service_url = service_url
   end
 
-  def image_url(uid:, filters: [], image_name: 'image.jpg', current_time: Time.current.to_i, until_time: Time.current.to_i + 86400)
-    generate_url_for(path: image_path(uid, filters, image_name), current_time: current_time, until_time: until_time )
+  def image_url(uid:, filters: [], image_name: 'image.jpg', current_time: nil, until_time: nil)
+    generate_url_for( path: image_path(uid, filters, image_name),
+                      current_time: (current_time && current_time.to_i),
+                      until_time: (until_time && until_time.to_i) )
   end
 
-  def upload_url(path: '/upload', current_time:, until_time:)
+  def upload_url(path: '/upload', current_time: Time.current, until_time: Time.current + 86400)
     generate_url_for(path: path, current_time: current_time, until_time: until_time)
   end
 
