@@ -42,7 +42,7 @@ class Vault8
   end
 
   def generate_url_for(path:, current_time: nil, until_time: nil)
-    uri = URI.join(service_url, path)
+    uri = URI.join(URI.encode(service_url), URI.encode(path))
     uri.query = { p: public_key,
                   s: encode_token(path: path, current_time: current_time, until_time: until_time),
                   time: current_time,
