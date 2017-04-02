@@ -21,7 +21,7 @@ class Vault8
   end
 
   def upload_url(path: '/upload', current_time: Time.current, until_time: Time.current + 86400)
-    generate_url_for(path: path, current_time: current_time, until_time: until_time)
+    generate_url_for(path: path, current_time: current_time.to_i, until_time: until_time.to_i)
   end
 
   def encode_token(path:, current_time: nil, until_time: nil)
@@ -42,7 +42,7 @@ class Vault8
   end
 
   def generate_url_for(path:, current_time: nil, until_time: nil)
-    uri = URI.join(service_url, path)
+    uri = URI.join(URI.encode(service_url), URI.encode(path))
     uri.query = { p: public_key,
                   s: encode_token(path: path, current_time: current_time, until_time: until_time),
                   time: current_time,
