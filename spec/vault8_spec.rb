@@ -206,4 +206,79 @@ describe Vault8 do
   it 'has a version number' do
     expect(Vault8::VERSION).not_to be nil
   end
+
+  describe '#upload_image' do
+    before do
+      allow(response).to receive(:body).and_return(response_body)
+      allow(vault8).to receive(:upload_url).and_return(upload_url)
+      allow(http).to receive(:start).and_yield(http_double)
+      allow(image).to receive(:respond_to?)
+      allow(image).to receive(:kind_of?)
+      allow(image).to receive(:path)
+      allow(File).to receive(:new).with(image).and_return(image)
+      allow(File).to receive(:extname).with(image).and_return('.png')
+      allow(UploadIO).to receive(:new).and_return(image)
+      allow(http_double).to receive(:request).and_return(response)
+    end
+
+    let(:http) { Net::HTTP }
+    let(:http_multipart) { Net::HTTP::Post::Multipart }
+    let(:http_double) { double(:http_double) }
+    let(:uid) { '0f2cb08592d04eb4a5c22da8eeca.gif' }
+    let(:response) { double(:response) }
+    let(:image) { double(:image) }
+    let(:upload_url) { "http://lvh.me:3000#{request_uri}" }
+    let(:request_uri) { '/upload?p=public&s=b92268754db8d4b962f83bb31b22e2a435ca1e94&time=1799955192&until=1799958792' }
+    let(:upload_uri) { URI(upload_url) }
+    let(:response_body) { "{\"response\":\"success\",\"image_uid\":\"#{uid}\"}" }
+    let(:result) { { 'response' => 'success', 'image_uid' => uid } }
+    subject { vault8.upload_image(image) }
+
+    context 'with param is a String' do
+
+      before do
+        allow(image).to receive(:kind_of?).with(String).and_return(true)
+        allow(http).to receive(:post_form).and_return(response)
+      end
+
+      it 'executes POST request to :upload_url with :url option' do
+        expect(http).to receive(:post_form).with(upload_uri, url: image)
+        is_expected.to eq(result)
+      end
+    end
+
+    context 'with param is a File' do
+      before do
+        allow(image).to receive(:kind_of?).with(File).and_return(true)
+      end
+
+      it 'executes POST request to :upload_url with provided file' do
+        expect(http_multipart).to receive(:new).with(request_uri, file: image).and_call_original
+        is_expected.to eq(result)
+      end
+    end
+
+    context 'with param is a Tempfile' do
+      before do
+        allow(image).to receive(:kind_of?).with(Tempfile).and_return(true)
+      end
+
+      it 'executes POST request to :upload_url with provided file' do
+        expect(http_multipart).to receive(:new).with(request_uri, file: image).and_call_original
+        is_expected.to eq(result)
+      end
+    end
+
+    context 'with param responds to :tempfile' do
+      before do
+        allow(image).to receive(:respond_to?).with(:tempfile).and_return(true)
+      end
+
+      it 'executes POST request to :upload_url with provided file' do
+        expect(http_multipart).to receive(:new).with(request_uri, file: image).and_call_original
+        is_expected.to eq(result)
+      end
+    end
+  end
+
 end
