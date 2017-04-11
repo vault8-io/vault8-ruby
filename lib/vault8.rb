@@ -1,6 +1,8 @@
-require "vault8/version"
+require 'vault8/version'
+require 'json'
 require 'uri'
-
+require 'net/http'
+require 'net/http/post/multipart'
 class Vault8
   attr_reader :public_key, :secret_key, :service_url
 
@@ -20,7 +22,7 @@ class Vault8
                       until_time: (until_time && until_time.to_i) )
   end
 
-  def upload_url(path: '/upload', current_time: Time.current, until_time: Time.current + 86400)
+  def upload_url(path: '/upload', current_time: Time.now, until_time: Time.now + 86400)
     generate_url_for(path: path, current_time: current_time.to_i, until_time: until_time.to_i)
   end
 
@@ -50,4 +52,46 @@ class Vault8
                 }.reduce([]) {|acc, x| acc << "#{x.first}=#{x.last}" unless x.last.nil?; acc}.join('&')
     uri.to_s
   end
+
+  def upload_image(file)
+    options = if file.kind_of? String
+      { url: file }
+    elsif file.respond_to?(:tempfile)
+      { file: file }
+    elsif file.kind_of?(File) || file.kind_of?(Tempfile)
+      { file: File.new(file) }
+    end
+
+    JSON.parse(post_request(options))
+  end
+
+  private
+
+  def post_request(options = {})
+    return post_link(options) if options[:url]
+    post_file(options)
+  end
+
+  # TODO: handle failed response?
+  def post_link(url:)
+    Net::HTTP.post_form(upload_uri, url: url).body
+  end
+
+  def post_file(file:, use_ssl: true)
+    Net::HTTP.start(upload_uri.host, upload_uri.port, use_ssl: use_ssl) do |http|
+      file = UploadIO.new(file, mime_for_file(file), file.path)
+      request = Net::HTTP::Post::Multipart.new(upload_uri.request_uri, file: file)
+      http.request(request).body
+    end
+  end
+
+  # TODO: add real mime-type check
+  def mime_for_file(file)
+    "image/#{File.extname(file)[1..-1]}"
+  end
+
+  def upload_uri
+    URI(upload_url)
+  end
+
 end
