@@ -5,7 +5,7 @@ describe Vault8 do
   let(:vault8) { described_class.create!(attrs) }
 
   describe 'module methods' do
-    describe '#create!' do
+    describe '.create!' do
       subject { described_class.create!(attrs) }
       context 'with valid attrs' do
         it { is_expected.to be_instance_of Vault8 }
@@ -36,7 +36,7 @@ describe Vault8 do
     end
   end
 
-  describe 'upload_url' do
+  describe '#upload_url' do
     let(:path) { '/upload' }
     let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
     let(:until_time) { 1799958792 } #Time.new(2027, 1, 14, 22, 33, 12).to_i
@@ -44,7 +44,7 @@ describe Vault8 do
     it { is_expected.to eq 'http://lvh.me:3000/upload?p=public&s=b92268754db8d4b962f83bb31b22e2a435ca1e94&time=1799955192&until=1799958792'}
   end
 
-  describe 'generate_url_for' do
+  describe '#generate_url_for' do
     context 'for image uploading' do
       let(:path) { '/upload' }
       let(:current_time) { 1799955192 } # Time.new(2027, 1, 14, 21, 33, 12).to_i
@@ -60,7 +60,7 @@ describe Vault8 do
     end
   end
 
-  describe 'encode_token' do
+  describe '#encode_token' do
     let(:public_key) { 'public' }
     let(:private_key) { 'private' }
     let(:path) { '/image_uid/grayscale/name.jpeg' }
@@ -82,7 +82,7 @@ describe Vault8 do
     end
   end
 
-  describe 'image_url' do
+  describe '#image_url' do
     let(:uid) {'731f70564f9145d79282f8267c4495ee'}
     let(:image_name) {'john.jpg'}
     subject {vault8.image_url(uid: uid, filters: filters, image_name: image_name)}
@@ -122,7 +122,7 @@ describe Vault8 do
     end
   end
 
-  describe 'image_path' do
+  describe '#image_path' do
     let(:uid) {'731f70564f9145d79282f8267c4495ee'}
     let(:image_name) {'john.jpg'}
     subject {vault8.image_path(uid, filters, image_name)}
@@ -143,7 +143,7 @@ describe Vault8 do
     end
   end
 
-  describe 'mergerd_filters' do
+  describe '#merged_filters' do
     subject {vault8.merged_filters(filters)}
 
     context 'no filters' do
@@ -277,6 +277,20 @@ describe Vault8 do
       it 'executes POST request to :upload_url with provided file' do
         expect(http_multipart).to receive(:new).with(request_uri, file: image).and_call_original
         is_expected.to eq(result)
+      end
+    end
+
+    context 'with invalid-JSON response from server' do
+      before do
+        allow(http).to receive(:post_form).and_return(response)
+        allow(http).to receive(:start).and_return(response)
+        allow(image).to receive(:kind_of?).with(String).and_return(true)
+      end
+
+      let(:response_body) { 'Server error' }
+
+      it 'returns Hash with { "response" => "error" }' do
+        expect(vault8.upload_image(image)).to eq('response' => 'error')
       end
     end
   end
