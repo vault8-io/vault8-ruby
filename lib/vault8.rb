@@ -3,6 +3,7 @@ require 'json'
 require 'uri'
 require 'net/http'
 require 'net/http/post/multipart'
+
 class Vault8
   attr_reader :public_key, :secret_key, :service_url
 
@@ -63,6 +64,8 @@ class Vault8
     end
 
     JSON.parse(post_request(options))
+  rescue JSON::ParserError
+    { 'response' => 'error' }
   end
 
   private
