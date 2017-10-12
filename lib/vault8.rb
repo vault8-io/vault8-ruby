@@ -32,7 +32,7 @@ class Vault8
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
-    '/' + [uid, merged_filters(filters), image_name].compact.join('/')
+    '/' + [uid, merged_filters(filters), URI.escape(image_name)].compact.join('/')
   end
 
   def merged_filters(filters=[])
