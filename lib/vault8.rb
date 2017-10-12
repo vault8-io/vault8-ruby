@@ -32,7 +32,7 @@ class Vault8
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
-    '/' + [uid, merged_filters(filters), URI.escape(image_name)].compact.join('/')
+    '/' + [uid, merged_filters(filters), image_name].compact.join('/')
   end
 
   def merged_filters(filters=[])
@@ -45,7 +45,8 @@ class Vault8
   end
 
   def generate_url_for(path:, current_time: nil, until_time: nil)
-    uri = URI.join(URI.encode(service_url), URI.encode(path))
+    path = URI.encode(path)
+    uri = URI.join(URI.encode(service_url), path)
     uri.query = { p: public_key,
                   s: encode_token(path: path, current_time: current_time, until_time: until_time),
                   time: current_time,
