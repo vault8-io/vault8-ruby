@@ -1,12 +1,14 @@
 PATH
   remote: .
   specs:
-    vault8 (0.1.0)
+    vault8 (0.1.2)
+      multipart-post (~> 2.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.5)
+    multipart-post (2.0.0)
     rake (10.5.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
@@ -32,4 +34,4 @@ DEPENDENCIES
   vault8!
 
 BUNDLED WITH
-   1.11.2
+   1.16.1
