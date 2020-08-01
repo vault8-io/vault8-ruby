@@ -3,6 +3,8 @@ require 'json'
 require 'uri'
 require 'net/http'
 require 'net/http/post/multipart'
+require 'digest'
+require 'tempfile'
 
 class Vault8
   attr_reader :public_key, :secret_key, :service_url
@@ -32,7 +34,7 @@ class Vault8
   end
 
   def image_path(uid, filters=[], image_name='image.jpg')
-    '/' + [uid, merged_filters(filters), URI.encode(URI.escape(image_name), '[]')].compact.join('/')
+    '/' + [uid, merged_filters(filters), escape(escape(image_name), '[]')].compact.join('/')
   end
 
   def merged_filters(filters=[])
@@ -45,8 +47,8 @@ class Vault8
   end
 
   def generate_url_for(path:, current_time: nil, until_time: nil)
-    path = URI.encode(path)
-    uri = URI.join(URI.encode(service_url), path)
+    path = escape(path)
+    uri = URI.join(service_url, path)
     uri.query = { p: public_key,
                   s: encode_token(path: path, current_time: current_time, until_time: until_time),
                   time: current_time,
@@ -98,4 +100,8 @@ class Vault8
     URI(upload_url)
   end
 
+  # https://github.com/ruby/ruby/blob/master/lib/uri/common.rb#L100-L104
+  def escape(*args)
+    URI::DEFAULT_PARSER.escape(*args)
+  end
 end
